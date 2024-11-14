@@ -10,12 +10,6 @@ import { useCluster } from "../cluster/cluster-data-access";
 import { useAnchorProvider } from "../solana/solana-provider";
 import { useTransactionToast } from "../ui/ui-layout";
 
-interface Todo {
-  title: string;
-  owner: PublicKey;
-  completed: boolean;
-}
-
 export function useTodoProgram() {
   const { connection } = useConnection();
   const { cluster } = useCluster();
@@ -39,7 +33,7 @@ export function useTodoProgram() {
 
   const createTodo = useMutation({
     mutationKey: ["todo", "create", { cluster }],
-    mutationFn: async ({ title }: Todo) => {
+    mutationFn: async (title: string) => {
       // const [todoAccountAddress] = await PublicKey.findProgramAddressSync(
       //   [Buffer.from(title), owner.toBuffer()],
       //   programId
@@ -74,7 +68,7 @@ export function useTodoProgramAccount({ account }: { account: PublicKey }) {
 
   const deleteTodo = useMutation({
     mutationKey: ["todo", "delete", { cluster }],
-    mutationFn: async ({ title }: Todo) => {
+    mutationFn: async (title: string) => {
       return program.methods.deleteTodo(title).rpc();
     },
     onSuccess: (signature) => {
@@ -86,7 +80,7 @@ export function useTodoProgramAccount({ account }: { account: PublicKey }) {
 
   const markAsCompletedTodo = useMutation({
     mutationKey: ["todo", "update", { cluster }],
-    mutationFn: async ({ title }: Todo) => {
+    mutationFn: async (title: string) => {
       return program.methods.markTodoAsDone(title).rpc();
     },
     onSuccess: (signature) => {

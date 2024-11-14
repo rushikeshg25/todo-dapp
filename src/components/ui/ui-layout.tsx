@@ -14,34 +14,16 @@ import {
 } from "../cluster/cluster-ui";
 import { WalletButton } from "../solana/solana-provider";
 
-export function UiLayout({
-  children,
-  links,
-}: {
-  children: ReactNode;
-  links: { label: string; path: string }[];
-}) {
+export function UiLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col px-10">
       <div className="navbar text-neutral-content flex-col md:flex-row space-y-2 md:space-y-0">
         <div className="flex-1">
           <Link className="font-semibold text-xl text-black" href="/">
             Todo Dapp
           </Link>
-          <ul className="menu menu-horizontal px-1 space-x-2">
-            {links.map(({ label, path }) => (
-              <li key={path}>
-                <Link
-                  className={pathname.startsWith(path) ? "active" : ""}
-                  href={path}
-                >
-                  {label}
-                </Link>
-              </li>
-            ))}
-          </ul>
         </div>
         <div className="flex-none space-x-2">
           <WalletButton />
