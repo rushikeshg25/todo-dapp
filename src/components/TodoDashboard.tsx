@@ -17,7 +17,9 @@ const TodoDashboard = () => {
     return (
       <div className="flex flex-col gap-5">
         <div>Connect your wallet to create a todo</div>
-        <WalletButton />
+        <div className="flex items-center justify-center">
+          <WalletButton />
+        </div>
       </div>
     );
   }
