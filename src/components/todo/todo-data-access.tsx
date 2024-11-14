@@ -1,104 +1,104 @@
-'use client'
+"use client";
 
-import {getTodoProgram, getTodoProgramId} from '@project/anchor'
-import {useConnection} from '@solana/wallet-adapter-react'
-import {Cluster, Keypair, PublicKey} from '@solana/web3.js'
-import {useMutation, useQuery} from '@tanstack/react-query'
-import {useMemo} from 'react'
-import toast from 'react-hot-toast'
-import {useCluster} from '../cluster/cluster-data-access'
-import {useAnchorProvider} from '../solana/solana-provider'
-import {useTransactionToast} from '../ui/ui-layout'
+import { getTodoProgram, getTodoProgramId } from "@project/anchor";
+import { useConnection } from "@solana/wallet-adapter-react";
+import { Cluster, Keypair, PublicKey } from "@solana/web3.js";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
+import toast from "react-hot-toast";
+import { useCluster } from "../cluster/cluster-data-access";
+import { useAnchorProvider } from "../solana/solana-provider";
+import { useTransactionToast } from "../ui/ui-layout";
+
+interface Todo {
+  title: string;
+  owner: PublicKey;
+  completed: boolean;
+}
 
 export function useTodoProgram() {
-  const { connection } = useConnection()
-  const { cluster } = useCluster()
-  const transactionToast = useTransactionToast()
-  const provider = useAnchorProvider()
-  const programId = useMemo(() => getTodoProgramId(cluster.network as Cluster), [cluster])
-  const program = getTodoProgram(provider)
+  const { connection } = useConnection();
+  const { cluster } = useCluster();
+  const transactionToast = useTransactionToast();
+  const provider = useAnchorProvider();
+  const programId = useMemo(
+    () => getTodoProgramId(cluster.network as Cluster),
+    [cluster]
+  );
+  const program = getTodoProgram(provider);
 
   const accounts = useQuery({
-    queryKey: ['todo', 'all', { cluster }],
+    queryKey: ["todo", "all", { cluster }],
     queryFn: () => program.account.todo.all(),
-  })
+  });
 
   const getProgramAccount = useQuery({
-    queryKey: ['get-program-account', { cluster }],
+    queryKey: ["get-program-account", { cluster }],
     queryFn: () => connection.getParsedAccountInfo(programId),
-  })
+  });
 
-  const initialize = useMutation({
-    mutationKey: ['todo', 'initialize', { cluster }],
-    mutationFn: (keypair: Keypair) =>
-      program.methods.initialize().accounts({ todo: keypair.publicKey }).signers([keypair]).rpc(),
-    onSuccess: (signature) => {
-      transactionToast(signature)
-      return accounts.refetch()
+  const createTodo = useMutation({
+    mutationKey: ["todo", "create", { cluster }],
+    mutationFn: async ({ title }: Todo) => {
+      // const [todoAccountAddress] = await PublicKey.findProgramAddressSync(
+      //   [Buffer.from(title), owner.toBuffer()],
+      //   programId
+      // );
+      return program.methods.createTodo(title).rpc();
     },
-    onError: () => toast.error('Failed to initialize account'),
-  })
+    onSuccess: (signature) => {
+      transactionToast(signature);
+      accounts.refetch();
+    },
+    onError: () => toast.error("Failed to create Todo"),
+  });
 
   return {
     program,
     programId,
     accounts,
     getProgramAccount,
-    initialize,
-  }
+    createTodo,
+  };
 }
 
 export function useTodoProgramAccount({ account }: { account: PublicKey }) {
-  const { cluster } = useCluster()
-  const transactionToast = useTransactionToast()
-  const { program, accounts } = useTodoProgram()
+  const { cluster } = useCluster();
+  const transactionToast = useTransactionToast();
+  const { program, accounts } = useTodoProgram();
 
   const accountQuery = useQuery({
-    queryKey: ['todo', 'fetch', { cluster, account }],
+    queryKey: ["todo", "fetch", { cluster, account }],
     queryFn: () => program.account.todo.fetch(account),
-  })
+  });
 
-  const closeMutation = useMutation({
-    mutationKey: ['todo', 'close', { cluster, account }],
-    mutationFn: () => program.methods.close().accounts({ todo: account }).rpc(),
-    onSuccess: (tx) => {
-      transactionToast(tx)
-      return accounts.refetch()
+  const deleteTodo = useMutation({
+    mutationKey: ["todo", "delete", { cluster }],
+    mutationFn: async ({ title }: Todo) => {
+      return program.methods.deleteTodo(title).rpc();
     },
-  })
+    onSuccess: (signature) => {
+      transactionToast(signature);
+      return accounts.refetch();
+    },
+    onError: () => toast.error("Failed to Delete Todo"),
+  });
 
-  const decrementMutation = useMutation({
-    mutationKey: ['todo', 'decrement', { cluster, account }],
-    mutationFn: () => program.methods.decrement().accounts({ todo: account }).rpc(),
-    onSuccess: (tx) => {
-      transactionToast(tx)
-      return accountQuery.refetch()
+  const markAsCompletedTodo = useMutation({
+    mutationKey: ["todo", "update", { cluster }],
+    mutationFn: async ({ title }: Todo) => {
+      return program.methods.markTodoAsDone(title).rpc();
     },
-  })
-
-  const incrementMutation = useMutation({
-    mutationKey: ['todo', 'increment', { cluster, account }],
-    mutationFn: () => program.methods.increment().accounts({ todo: account }).rpc(),
-    onSuccess: (tx) => {
-      transactionToast(tx)
-      return accountQuery.refetch()
+    onSuccess: (signature) => {
+      transactionToast(signature);
+      return accounts.refetch();
     },
-  })
-
-  const setMutation = useMutation({
-    mutationKey: ['todo', 'set', { cluster, account }],
-    mutationFn: (value: number) => program.methods.set(value).accounts({ todo: account }).rpc(),
-    onSuccess: (tx) => {
-      transactionToast(tx)
-      return accountQuery.refetch()
-    },
-  })
+    onError: () => toast.error("Failed to mark Todo as completed"),
+  });
 
   return {
     accountQuery,
-    closeMutation,
-    decrementMutation,
-    incrementMutation,
-    setMutation,
-  }
+    markAsCompletedTodo,
+    deleteTodo,
+  };
 }
