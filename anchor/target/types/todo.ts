@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/todo.json`.
  */
 export type Todo = {
-  "address": "AsjZ3kWAUSQRNt2pZVeJkywhZ6gpLpHZmJjduPmKZDZZ",
+  "address": "CsDQ5hCD7iQWTy3MvbRvoysQbo5tGQ92wemqjbMEQPUT",
   "metadata": {
     "name": "todo",
     "version": "0.1.0",
@@ -14,90 +14,36 @@ export type Todo = {
   },
   "instructions": [
     {
-      "name": "close",
+      "name": "createTodo",
       "discriminator": [
-        98,
-        165,
-        201,
-        177,
-        108,
-        65,
-        206,
-        96
+        250,
+        161,
+        142,
+        148,
+        131,
+        48,
+        194,
+        181
       ],
       "accounts": [
         {
-          "name": "payer",
+          "name": "newTodo",
           "writable": true,
-          "signer": true
+          "pda": {
+            "seeds": [
+              {
+                "kind": "arg",
+                "path": "title"
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
         },
         {
-          "name": "todo",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "decrement",
-      "discriminator": [
-        106,
-        227,
-        168,
-        59,
-        248,
-        27,
-        150,
-        101
-      ],
-      "accounts": [
-        {
-          "name": "todo",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "increment",
-      "discriminator": [
-        11,
-        18,
-        104,
-        9,
-        104,
-        174,
-        59,
-        33
-      ],
-      "accounts": [
-        {
-          "name": "todo",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "initialize",
-      "discriminator": [
-        175,
-        175,
-        109,
-        31,
-        13,
-        152,
-        155,
-        237
-      ],
-      "accounts": [
-        {
-          "name": "payer",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "todo",
+          "name": "owner",
           "writable": true,
           "signer": true
         },
@@ -106,30 +52,101 @@ export type Todo = {
           "address": "11111111111111111111111111111111"
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "title",
+          "type": "string"
+        }
+      ]
     },
     {
-      "name": "set",
+      "name": "deleteTodo",
       "discriminator": [
-        198,
-        51,
-        53,
-        241,
-        116,
-        29,
-        126,
-        194
+        224,
+        212,
+        234,
+        177,
+        90,
+        57,
+        219,
+        115
       ],
       "accounts": [
         {
-          "name": "todo",
-          "writable": true
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "deleteTodo",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "arg",
+                "path": "title"
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
         }
       ],
       "args": [
         {
-          "name": "value",
-          "type": "u8"
+          "name": "title",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "markTodoAsDone",
+      "discriminator": [
+        176,
+        42,
+        190,
+        0,
+        177,
+        147,
+        206,
+        236
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "markAsDoneTodo",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "arg",
+                "path": "title"
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "title",
+          "type": "string"
         }
       ]
     }
@@ -138,14 +155,14 @@ export type Todo = {
     {
       "name": "todo",
       "discriminator": [
-        255,
-        176,
-        4,
-        245,
-        188,
-        253,
-        124,
-        25
+        137,
+        179,
+        206,
+        68,
+        34,
+        36,
+        131,
+        54
       ]
     }
   ],
@@ -156,8 +173,20 @@ export type Todo = {
         "kind": "struct",
         "fields": [
           {
-            "name": "count",
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "bump",
             "type": "u8"
+          },
+          {
+            "name": "isDone",
+            "type": "bool"
           }
         ]
       }
