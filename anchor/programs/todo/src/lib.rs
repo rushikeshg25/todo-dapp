@@ -17,7 +17,7 @@ pub mod todo {
         };
         Ok(())
     }
-    pub fn delete_todo(ctx: Context<DeleteTodo>, title: String) -> Result<()> {
+    pub fn delete_todo(_ctx: Context<DeleteTodo>, _title: String) -> Result<()> {
         msg!("Todo Deleted bro");
         Ok(())
     }
