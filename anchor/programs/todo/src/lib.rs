@@ -18,10 +18,15 @@ pub mod todo {
         Ok(())
     }
     pub fn delete_todo(ctx: Context<DeleteTodo>, title: String) -> Result<()> {
-        msg!("Todo Deleted");
+        msg!("Todo Deleted bro");
         Ok(())
     }
-    pub fn update_todo(ctx: Context<UpdateTodo>, title: String) -> Result<()> {
+    // pub fn update_todo(ctx: Context<UpdateTodo>, title: String) -> Result<()> {
+    //     Ok(())
+    // }
+    pub fn mark_todo_as_done(ctx:Context<MarkAsDone>,title: String)->Result<()>{
+        let todo_to_be_marked_as_done=&mut ctx.accounts.mark_as_done_todo;
+        todo_to_be_marked_as_done.is_done=true;
         Ok(())
     }
 }
@@ -44,8 +49,20 @@ pub struct CreateTodo<'info> {
     pub system_program: Program<'info, System>,
 }
 
-#[derive(Accounts)]
-pub struct UpdateTodo<'info> {}
+// #[derive(Accounts)]
+// #[instruction(title:String)]
+// pub struct UpdateTodo<'info> {
+//     pub system_program:Program<'info,System>,
+//     #[account(mut)]
+//     pub owner:Signer<'info>,
+//     #[account(
+//         mut,
+//         seeds=[title.as_bytes(),owner.key().as_ref()],
+//         bump,
+//         realloc=
+//     )]
+//     pub update_todo:Account<'info,Todo>
+// }
 
 #[derive(Accounts)]
 #[instruction(title:String)]
@@ -65,7 +82,18 @@ pub struct DeleteTodo<'info> {
 
 
 #[derive(Accounts)]
-pub struct MarkAsDone<'info>{}
+#[instruction(title:String)]
+pub struct MarkAsDone<'info>{
+    pub owner:Signer<'info>,
+    pub system_program:Program<'info,System>,
+
+    #[account(
+        mut,
+        seeds=[title.as_bytes(),owner.key().as_ref()],
+        bump,
+    )]
+    pub mark_as_done_todo:Account<'info,Todo>
+}
 
 #[account]
 #[derive(Debug,InitSpace)]
