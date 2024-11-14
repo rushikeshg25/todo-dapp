@@ -33,7 +33,9 @@ export function UiLayout({ children }: { children: ReactNode }) {
             <Link
               href={"https://github.com/rushikeshg25/todo-dapp"}
               target="_blank"
-            ></Link>
+            >
+              <Github />
+            </Link>
           </Button>
         </div>
       </div>
