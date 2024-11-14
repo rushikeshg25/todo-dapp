@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import * as React from "react";
 import { ReactNode, Suspense, useEffect, useRef } from "react";
 import toast, { Toaster } from "react-hot-toast";
-
+import { Github } from "lucide-react";
 import { AccountChecker } from "../account/account-ui";
 import {
   ClusterChecker,
@@ -13,6 +13,7 @@ import {
   ExplorerLink,
 } from "../cluster/cluster-ui";
 import { WalletButton } from "../solana/solana-provider";
+import { Button } from "./button";
 
 export function UiLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -28,6 +29,12 @@ export function UiLayout({ children }: { children: ReactNode }) {
         <div className="flex-none space-x-2">
           <WalletButton />
           <ClusterUiSelect />
+          <Button asChild className="p-6">
+            <Link
+              href={"https://github.com/rushikeshg25/todo-dapp"}
+              target="_blank"
+            ></Link>
+          </Button>
         </div>
       </div>
       <ClusterChecker>
