@@ -24,7 +24,7 @@ pub mod todo {
     // pub fn update_todo(ctx: Context<UpdateTodo>, title: String) -> Result<()> {
     //     Ok(())
     // }
-    pub fn mark_todo_as_done(ctx:Context<MarkAsDone>,title: String)->Result<()>{
+    pub fn mark_todo_as_done(ctx:Context<MarkAsDone>,_title: String)->Result<()>{
         let todo_to_be_marked_as_done=&mut ctx.accounts.mark_as_done_todo;
         todo_to_be_marked_as_done.is_done=true;
         Ok(())
