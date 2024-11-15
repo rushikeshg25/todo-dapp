@@ -28,7 +28,6 @@ export function UiLayout({ children }: { children: ReactNode }) {
         </div>
         <div className="flex-none space-x-2">
           <WalletButton />
-          <ClusterUiSelect />
           <Button asChild className="p-6">
             <Link
               href={"https://github.com/rushikeshg25/todo-dapp"}
