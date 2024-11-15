@@ -139,7 +139,7 @@
       ],
       "args": [
         {
-          "name": "title",
+          "name": "_title",
           "type": "string"
         }
       ]
